@@ -32,6 +32,7 @@ config.rb
 cgi-bin
 node_modules
 styleguide
+docs
 
 # Ignore as they are customized on the user end.
 .lando.yml

@@ -82,6 +82,10 @@ module.exports = function(grunt) {
       styleguide: {
         "cmd": "./node_modules/.bin/kss",
         "args": ['--config=kss/kss-config.json']
+      },
+      docs: {
+        "cmd": "./node_modules/.bin/kss",
+        "args": ['--config=kss/kss-config-docs.json']
       }
     },
     deploy_site: {
@@ -103,6 +107,7 @@ module.exports = function(grunt) {
           {expand: true, cwd: 'core/fonts', src: ['**'], dest: 'styleguide/fonts/'},
           {expand: true, cwd: 'core/js', src: ['**'], dest: 'styleguide/js/'},
           {expand: true, cwd: 'core/img', src: ['**'], dest: 'styleguide/img/'},
+          {expand: true, cwd: 'docs', src: ['**'], dest: 'styleguide/docs/'},
         ],
       },
     },
@@ -120,6 +125,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('deploy', ['styleguide', 'deploy_site:styleguide', 'clean:postdeploy']);
   grunt.registerTask('styleguide', ['compile', 'uglify', 'clean:styleguide', 'run:styleguide', 'copy:styleguide']);
+  grunt.registerTask('docs', ['run:docs']);
   grunt.registerTask('compile', ['sass:dist', 'postcss:dist']);
   grunt.registerTask('default', ['watch']);
 
