@@ -76,6 +76,11 @@ module.exports = function(grunt) {
         src: [
           '.styleguide_site'
         ]
+      },
+      postdocs: {
+        src: [
+          "docs/*.html"
+        ]
       }
     },
     run: {
@@ -86,6 +91,13 @@ module.exports = function(grunt) {
       docs: {
         "cmd": "./node_modules/.bin/kss",
         "args": ['--config=kss/kss-config-docs.json']
+      }
+    },
+    html2md: {
+      docs: {
+        src: [
+          'docs/*.html'
+        ]
       }
     },
     deploy_site: {
@@ -122,10 +134,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-postcss');
   grunt.loadNpmTasks('grunt-deploy-site');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-html2md');
+
 
   grunt.registerTask('deploy', ['styleguide', 'deploy_site:styleguide', 'clean:postdeploy']);
   grunt.registerTask('styleguide', ['compile', 'uglify', 'clean:styleguide', 'run:styleguide', 'copy:styleguide']);
-  grunt.registerTask('docs', ['run:docs']);
+  grunt.registerTask('docs', ['run:docs', 'html2md:docs', 'clean:postdocs']);
   grunt.registerTask('compile', ['sass:dist', 'postcss:dist']);
   grunt.registerTask('default', ['watch']);
 

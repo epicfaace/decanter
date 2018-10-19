@@ -7,7 +7,7 @@
   "js": [
     "js/decanter.min.js"
   ],
-  "builder": "builder/twig",
+  "builder": "builder/decanter",
   "extend-drupal8": true,
   "namespace": "decanter:core/templates",
   "markup": true,
