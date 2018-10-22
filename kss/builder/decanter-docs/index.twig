@@ -1,0 +1,73 @@
+{% if template.isHomepage %}
+  {% if homepage %}
+    {{ homepage|raw }}
+  {% endif %}
+{% else %}
+
+  {#
+    Display each section, in order.
+
+    The "root" element comes first in this loop, and can be detected using the
+    "loop.first" variable as seen below.
+  #}
+  {% for section in sections %}
+        <h1>
+          {{ section.header }}
+        </h1>
+        <h3>
+          <a class="kss-title__permalink" href="#kssref-{{ section.referenceURI }}">
+              {{ section.referenceNumber }}
+          </a>
+        </h3>
+
+        {% if section.description %}
+          <p>{{ section.description|raw }}</p>
+        {% endif %}
+
+        {% for parameter in section.parameters %}
+          {% if loop.first %}
+            ### Parameters:  
+            <ul>
+          {% endif %}
+            <li>{{ parameter.name|raw }}<br/>  
+              {{ parameter.description|raw }}<br />
+                {% if parameter.defaultValue %}
+                    Defaults to: <code>{{ parameter.defaultValue|raw }}</code>
+                {% endif %}
+            </li>
+          {% if loop.last %}
+            </ul>
+          {% endif %}
+        {% endfor %}
+
+      {% if section.example %}
+
+          <h3>Example{% if section.modifiers is not empty %}s{% endif %}</h3>
+
+          {% if section.modifiers is not empty %}
+            <h4>Default styling</h4>
+          {% endif %}
+            
+            {{ section.example|raw }}
+
+          {% for modifier in section.modifiers %}
+              {{ modifier.name }}
+              {{ modifier.description|raw }}
+              {{ modifier.markup|raw }}
+          {% endfor %}
+
+        {% if section.markup %}
+              {% if section.markupFile %}
+                Markup: <code>{{ section.markupFile }}</code>
+              {% else %}
+                Markup
+              {% endif %}
+            <pre class="prettyprint linenums lang-html"><code data-language="html">{{ section.markup|escape('html') }}</code></pre>
+        {% endif %}
+      {% endif %}
+
+      {% if section.source.filename %}
+          <p>Source: <code>{{ section.source.filename }}</code>, line {{ section.source.line }}</p>
+      {% endif %}
+  {% endfor %}
+{% endif %}

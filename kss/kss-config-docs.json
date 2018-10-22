@@ -7,7 +7,7 @@
   "js": [
     "js/decanter.min.js"
   ],
-  "builder": "builder/decanter",
+  "builder": "builder/decanter-docs",
   "extend-drupal8": true,
   "namespace": "decanter:core/templates",
   "markup": true,
