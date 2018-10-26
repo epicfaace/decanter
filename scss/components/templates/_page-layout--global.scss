@@ -1,0 +1,28 @@
+@charset "UTF-8";
+
+//
+// Page Layout: Global
+//
+// Styles to apply to elements common to all page layouts.
+//
+// Weight: 0
+//
+// Style guide: Templates.Page Layout: Global
+//
+
+body {
+  @include sticky-footer--body;
+}
+
+.region--header {
+  @include sticky-footer--header;
+}
+
+.page-layout {
+  @include page-layout;
+  @include sticky-footer--main;
+}
+
+.region--footer {
+  @include sticky-footer--footer;
+}
