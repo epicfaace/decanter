@@ -5,29 +5,31 @@
 //
 // A modular margin mixin for default spacing around an element.
 //
+// $location - can be "margin" "margin-top" "margin-left" or "margin-right"
+//
 // Style guide: Mixins.Modular.modular-margin
 //
-@mixin modular-margin {
+@mixin modular-margin($location: margin) {
 
   @include grid-media('2xl') {
-    margin: map-get($modular-spacing, '2xl');
+    #{$location}: map-get($modular-spacing, '2xl');
   }
 
   @include grid-media('xl') {
-    margin: map-get($modular-spacing, 'xl');
+    #{$location}: map-get($modular-spacing, 'xl');
   }
 
   @include grid-media('lg') {
-    margin: map-get($modular-spacing, 'lg');
+    #{$location}: map-get($modular-spacing, 'lg');
   }
 
   @include grid-media('md') {
-    margin: map-get($modular-spacing, 'md');
+    #{$location}: map-get($modular-spacing, 'md');
   }
 
   @include grid-media('sm') {
-    margin: map-get($modular-spacing, 'sm');
+    #{$location}: map-get($modular-spacing, 'sm');
   }
 
-  margin: map-get($modular-spacing, 'xs');
+  #{$location}: map-get($modular-spacing, 'xs');
 }

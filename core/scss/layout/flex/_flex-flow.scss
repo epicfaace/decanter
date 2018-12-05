@@ -1,0 +1,17 @@
+@charset "UTF-8";
+
+//
+// .flex-flow
+//
+// A flex grid auto flowing item rows
+//
+// Markup:
+//   .flex-flow {
+//     @include flex-flow();
+//   }
+//
+// Style guide: Layout.Flex.flex-flow
+//
+.flex-flow {
+  @include flex-flow();
+}

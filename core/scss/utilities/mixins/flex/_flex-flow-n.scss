@@ -1,0 +1,22 @@
+@charset "UTF-8";
+
+// Flex Auto Flow
+//
+// Mixins for the Class-Based Grids
+//
+// Style guide: Mixins.Flex.flex-auto
+//
+@mixin flex-flow-n($items: 1, $gutters: $grid-gutters) {
+  // @include modular-margin();
+
+  @each $key, $gutter in $gutters {
+    $ratio: 1 of $items;
+    @include grid-media($key) {
+      > * {
+        flex: 1 0 calc(#{flex-column-width($ratio, $gutter)});
+        @include margin(map-get($modular-spacing, $key)/2);
+      }
+    }
+  }
+
+}

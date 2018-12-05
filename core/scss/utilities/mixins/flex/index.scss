@@ -7,8 +7,11 @@
 // Style guide: Mixins.Flex
 //
 @import
+  'flex-flow-n',
+  'flex-flow',
   'flex-column',
   'flex-container',
+  'flex-equal-height',
   'responsive-flex-column',
   'flex-container',
   'flex-grid-push';

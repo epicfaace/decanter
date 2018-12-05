@@ -1,0 +1,13 @@
+@charset "UTF-8";
+
+// Flex Auto Flow
+//
+// Mixins for the Class-Based Grids
+//
+// Style guide: Mixins.Flex.flex-equal-height
+//
+@mixin flex-equal-height() {
+  display: flex;
+  align-items: stretch;
+  align-content: stretch;
+}

@@ -1,0 +1,29 @@
+@charset "UTF-8";
+
+//
+// Flex-N Items
+//
+// A flex grid flow flowing item rows
+//
+// .flex-flow--2 - Two columns
+// .flex-flow--3 - Three columns
+// .flex-flow--4 - Four columns
+// .flex-flow--5 - Five columns
+// .flex-flow--6 - Six columns
+// .flex-flow--7 - Seven columns
+// .flex-flow--8 - Eight columns
+// .flex-flow--9 - Nine columns
+// .flex-flow--10 - Ten columns
+// .flex-flow--11 - Eleven columns
+// .flex-flow--12 - twelve columns
+//
+// Markup: ../../../../../templates/layout/flex/flex-flow.twig
+//
+// Style guide: Layout.Flex.flex-flow-n
+//
+
+@for $i from 2 through $grid-columns {
+  .flex-flow--#{$i} {
+    @include flex-flow-n($i);
+  }
+}
