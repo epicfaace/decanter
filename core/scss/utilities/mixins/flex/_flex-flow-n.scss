@@ -7,14 +7,17 @@
 // Style guide: Mixins.Flex.flex-auto
 //
 @mixin flex-flow-n($items: 1, $gutters: $grid-gutters) {
-  // @include modular-margin();
 
   @each $key, $gutter in $gutters {
-    $ratio: 1 of $items;
+    $margin: ($gutter / 2) * -1;
+
     @include grid-media($key) {
+      @include margin($margin);
+
       > * {
-        flex: 1 0 calc(#{flex-column-width($ratio, $gutter)});
-        @include margin(map-get($modular-spacing, $key)/2);
+        flex: 1 1 calc(#{percentage(flex-column-ratio(1, $items))} - #{$gutter});
+        width: calc(#{percentage(flex-column-ratio(1, $items))} - #{$gutter});
+        @include margin($gutter / 2);
       }
     }
   }
