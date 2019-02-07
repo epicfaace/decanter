@@ -8,90 +8,89 @@ document.addEventListener( "DOMContentLoaded", event => {
 
   const isExpanded = elem => elem.getAttribute('aria-expanded') === 'true';
 
-  const setAriaExpanded = ( elem, value ) => { elem.setAttribute('aria-expanded', value); }
+  const setAriaExpanded = ( elem, value ) => { elem.setAttribute('aria-expanded', value); };
+
+  const openSubNav = ( trigger, level = 'lv1' ) => {
+    closeAllSubNavs();
+    trigger.classList.add( 'su-main-nav__item-' + level + '--expanded' );
+    setAriaExpanded( trigger, 'true' );
+
+    // set focus on the first link in the newly opened subnav
+    let firstLink = trigger.querySelector( 'ul > li' ).firstElementChild; // no idea why 'ul > li > a' doesn't work???
+    firstLink.focus();
+  };
+
+  const closeSubNav = ( trigger, level = 'lv1' ) => {
+    trigger.classList.remove( 'su-main-nav__item-' + level + '--expanded' );
+    setAriaExpanded( trigger, 'false' );
+  };
 
   const toggleSubNav = event => {
     event = event || window.event;
-    console.debug( "event: ", event );
     event.preventDefault();
 
     const target = event.target || event.srcElement; // the <a> element that was clicked
     const item = target.parentElement; // the <li> that contains the <a> element that was clicked
-    const firstLink = target.nextElementSibling.querySelector( 'a' );
-    console.debug( "target: ", target );
-    console.debug( "item: ", item );
-    console.debug( "firstLink: ", firstLink );
 
     if ( isExpanded( item ) ) {
-      item.classList.remove( 'su-main-nav__item-lv1--expanded' );
-      setAriaExpanded( item, 'false' );
-      target.focus();
+      closeSubNav( item );
     }
     else {
-      item.classList.add( 'su-main-nav__item-lv1--expanded' );
-      setAriaExpanded( item, 'true' );
-      firstLink.focus();
+      openSubNav( item );
     }
   };
 
-  const openMobileMenu = ( menu, toggle) => {
-    const firstLink = menu.querySelector( 'li > a' );
-    console.debug( 'firstLink: ', firstLink );
+  const openMobileNav = ( nav, toggle) => {
+    closeAllMobileNavs();
 
     toggle.innerHTML = 'Close';
-    setAriaExpanded( menu, 'true' );
+    setAriaExpanded( nav, 'true' );
     setAriaExpanded( toggle, 'true' );
-    firstLink.focus(); // Focus on the first top level link
+    nav.querySelector( 'li > a' ).focus(); // Focus on the first top level link
   };
 
-  const closeMobileMenu = ( menu, toggle) => {
+  const closeMobileNav = ( nav, toggle) => {
     toggle.innerHTML = 'Menu';
-    setAriaExpanded( menu, 'false' );
+    setAriaExpanded( nav, 'false' );
     setAriaExpanded( toggle, 'false' );
-    toggle.focus(); // focus on the toggle
   };
 
-  const toggleMobileMenu = event => {
+  const toggleMobileNav = event => {
     event = event || window.event;
     event.preventDefault();
 
     const toggle = event.target || event.srcElement; // the <button> element that was clicked
     const nav = toggle.parentElement;
-    console.debug( 'toggle: ', toggle );
-    console.debug( 'nav: ', nav );
 
     if ( isExpanded( nav ) ) {
-      closeMobileMenu( nav, toggle );
+      closeMobileNav( nav, toggle );
     }
     else {
-      openMobileMenu( nav, toggle );
+      openMobileNav( nav, toggle );
     }
   };
+
+  const closeAllSubNavs = () => { subNavs.forEach( subNav => { closeSubNav( subNav ); } ); };
+
+  const closeAllMobileNavs = () => { navs.forEach( ( nav ) => { closeMobileNav( nav, nav.querySelector( 'button' ) ); } ); };
 
   //////
   // Code
 
-  const navs = document.querySelectorAll( '.su-main-nav' ); // find all main nav's
-
-  // if more than 1 main nav, assign lower z-index to main navs lower on the page so they don't cover each other up
-  if ( navs.length > 1 ) {
-    const firstZindex = getComputedStyle( navs[ 0 ], null ).zIndex;
-    for ( let i = 1; i < navs.length; i++ ) {
-      navs[ i ].style.zIndex = firstZindex - 300 * i;
-    }
-  }
+  const navs = document.querySelectorAll( '.su-main-nav' ); // all main nav's
+  let subNavs = []; // array of subnavs to be closed by closeAllSubNavs();
 
   // process each nav element
   navs.forEach( ( nav, index ) => {
     const mobileToggle = nav.querySelector( nav.tagName + " > button" );
     const topLevelItems = nav.querySelectorAll( nav.tagName + " > ul > li" );
 
-    mobileToggle.addEventListener( 'click', toggleMobileMenu );
+    mobileToggle.addEventListener( 'click', toggleMobileNav );
 
     topLevelItems.forEach( ( item ) => {
-      const secondLevelItems = item.querySelectorAll( item.tagName + " > ul > li" );
-      const hasSubNav = secondLevelItems.length > 0;
+      const hasSubNav = item.lastElementChild.tagName === 'UL';
       if ( hasSubNav ) {
+        subNavs.push( item ); // remember
         console.debug( "parent node found" );
         item.addEventListener( 'click', toggleSubNav );
       }
