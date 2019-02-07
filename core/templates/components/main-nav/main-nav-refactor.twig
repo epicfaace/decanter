@@ -12,7 +12,7 @@
     <li class="su-main-nav__item-lv1 {% if is_parent %}su-main-nav__item-lv1--parent{% endif %} {% if item.current %}su-main-nav__item-lv1--current{% endif %}">
       <a href="{{ item.href }}" {% if item.target is not empty %}target="{{ item.target }}"{% endif %}>{{ item.text }}</a>
       {% if is_parent %}
-        <ul class="su-main-nav__menu-lv2">
+        <ul class="su-main-nav__menu-lv2" aria-expanded="false">
           {% for item_lv2 in item.lv2 %}
             <li class="su-main-nav__item-lv2 {% if item_lv2.current %}su-main-nav__item-lv2--current{% endif %}">
               <a href="{{ item_lv2.href }}" {% if item_lv2.target is not empty %}target="{{ item_lv2.target }}"{% endif %}>{{ item_lv2.text }}</a>
