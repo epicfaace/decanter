@@ -28,6 +28,7 @@ document.addEventListener( "DOMContentLoaded", event => {
   const toggleSubNav = event => {
     event = event || window.event;
     event.preventDefault();
+    event.stopPropagation();
 
     const target = event.target || event.srcElement; // the <a> element that was clicked
     const item = target.parentElement; // the <li> that contains the <a> element that was clicked
@@ -58,6 +59,7 @@ document.addEventListener( "DOMContentLoaded", event => {
   const toggleMobileNav = event => {
     event = event || window.event;
     event.preventDefault();
+    event.stopPropagation();
 
     const toggle = event.target || event.srcElement; // the <button> element that was clicked
     const nav = toggle.parentElement;
@@ -104,4 +106,9 @@ document.addEventListener( "DOMContentLoaded", event => {
       }
     } );
   } ); // navs.forEach
+
+  document.addEventListener('click', ( event ) => {
+    closeAllSubNavs();
+    closeAllMobileNavs();
+  }, false );
 } ); // on DOMContentLoaded
