@@ -80,6 +80,14 @@ document.addEventListener( "DOMContentLoaded", event => {
   const navs = document.querySelectorAll( '.su-main-nav' ); // all main nav's
   let subNavs = []; // array of subnavs to be closed by closeAllSubNavs();
 
+  // if more than 1 main nav, assign lower z-index to main navs lower on the page so they don't cover each other up
+  if ( navs.length > 1 ) {
+    const firstZindex = getComputedStyle( navs[ 0 ], null ).zIndex;
+    for ( let i = 1; i < navs.length; i++ ) {
+      navs[ i ].style.zIndex = firstZindex - 300 * i;
+    }
+  }
+
   // process each nav element
   navs.forEach( ( nav, index ) => {
     const mobileToggle = nav.querySelector( nav.tagName + " > button" );
