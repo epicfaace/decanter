@@ -1,14 +1,39 @@
 //// TODO: move to component file
 document.addEventListener( "DOMContentLoaded", event => {
+
+  const navClass = 'su-main-nav';
+
   // if NodeList doesn't support forEach, use Array's forEach()
   NodeList.prototype.forEach = NodeList.prototype.forEach || Array.prototype.forEach;
 
   //////
   // Functions
 
+  const showingDesktopNav = () => getComputedStyle( aMobileToggle ).display === 'none';
+
   const isExpanded = elem => elem.getAttribute('aria-expanded') === 'true';
 
   const setAriaExpanded = ( elem, value ) => { elem.setAttribute('aria-expanded', value); };
+
+  const hasSubNav = elem => ( elem.tagName.toUpperCase() == 'LI' && elem.lastElementChild.tagName.toUpperCase() === 'UL' );
+
+  const getNav = elem => {
+    console.debug( 'getNav: elem: ', elem );
+    do {
+      elem = elem.parentElement;
+      console.debug( 'getNav: elem: ', elem );
+    } while ( elem && !elem.classList.contains( navClass ) );
+    return elem;
+  };
+
+  const getSubNav = elem => {
+    console.debug( 'getSubNav: elem: ', elem );
+    do {
+      elem = elem.parentElement;
+      console.debug( 'getSubNav: elem: ', elem );
+    } while ( elem && !hasSubNav( elem ) );
+    return elem;
+  };
 
   const openSubNav = ( trigger, level = 'lv1' ) => {
     closeAllSubNavs();
@@ -25,6 +50,7 @@ document.addEventListener( "DOMContentLoaded", event => {
     setAriaExpanded( trigger, 'false' );
   };
 
+  // click handler for subnav triggers
   const toggleSubNav = event => {
     event = event || window.event;
     event.preventDefault();
@@ -41,7 +67,7 @@ document.addEventListener( "DOMContentLoaded", event => {
     }
   };
 
-  const openMobileNav = ( nav, toggle) => {
+  const openMobileNav = ( nav, toggle ) => {
     closeAllMobileNavs();
 
     toggle.innerHTML = 'Close';
@@ -50,12 +76,13 @@ document.addEventListener( "DOMContentLoaded", event => {
     nav.querySelector( 'li > a' ).focus(); // Focus on the first top level link
   };
 
-  const closeMobileNav = ( nav, toggle) => {
+  const closeMobileNav = ( nav, toggle ) => {
     toggle.innerHTML = 'Menu';
     setAriaExpanded( nav, 'false' );
     setAriaExpanded( toggle, 'false' );
   };
 
+  // click handler for hamburger icon (mobile menu toggle)
   const toggleMobileNav = event => {
     event = event || window.event;
     event.preventDefault();
@@ -77,9 +104,52 @@ document.addEventListener( "DOMContentLoaded", event => {
   const closeAllMobileNavs = () => { navs.forEach( ( nav ) => { closeMobileNav( nav, nav.querySelector( 'button' ) ); } ); };
 
   //////
+  // Keyboard interaction
+
+  // helper functions
+  const isHome = theKey => ( theKey === 'Home' || theKey === 122 );
+  const isEnd = theKey => ( theKey === 'End' || theKey === 123 );
+  const isTab = theKey => ( theKey === 'Tab' || theKey === 9 );
+  const isEsc = theKey => ( theKey === 'Escape' || theKey === 'Esc' || theKey === 27 );
+  const isSpace = theKey => ( theKey === ' ' || theKey === 'Spacebar' || theKey === 32 );
+  const isEnter = theKey => ( theKey === 'Enter' || theKey === 13 );
+  const isLeftArrow = theKey => ( theKey === 'ArrowLeft' || theKey === 'Left' || theKey === 37 );
+  const isRightArrow = theKey => ( theKey === 'ArrowRight' || theKey === 'Right' || theKey === 39 );
+  const isUpArrow = theKey => ( theKey === 'ArrowUp' || theKey === 'Up' || theKey === 38 );
+  const isDownArrow = theKey => ( theKey === 'ArrowDown' || theKey === 'Down' || theKey === 40 );
+
+  // keydown handlers
+  const keyDownTopNav = event => {
+    event = event || window.event;
+    event.stopPropagation();
+
+    const target = event.target || event.srcElement; // the element that had focus when the key was pressed (presumably an <a> element)
+    const theKey = event.key || event.keyCode;
+    console.debug( 'You pressed the ', theKey, ' key on target ', target );
+    const theNav = getNav( target );
+    console.debug( 'theNav: ', theNav );
+    const theSubNav = getSubNav( target );
+    console.debug( 'theSubNav: ', theSubNav );
+    const firstLink = theNav.querySelector( 'ul > li > a' );
+    const lastLink = theNav.querySelector( 'ul > li:last-child > a' );
+
+
+    if ( isHome( theKey ) ) {
+      firstLink.focus(); // Focus on the first top level menu link when HOME button is pressed
+    } else if ( isEnd( theKey ) ) {
+      lastLink.focus(); // Focus on the last top level menu link when END button is pressed
+    } else if ( ( isSpace( theKey ) || isEnter( theKey ) ) && theSubNav ) {
+      event.preventDefault();
+      openSubNav( theSubNav );
+    }
+  };
+
+
+  //////
   // Code
 
-  const navs = document.querySelectorAll( '.su-main-nav' ); // all main nav's
+  const navs = document.querySelectorAll( '.' + navClass ); // all main nav's
+  let aMobileToggle = null; // the first mobile toggle we find - used to determine if we're displaying mobile or desktop nav
   let subNavs = []; // array of subnavs to be closed by closeAllSubNavs();
 
   // if more than 1 main nav, assign lower z-index to main navs lower on the page so they don't cover each other up
@@ -96,12 +166,13 @@ document.addEventListener( "DOMContentLoaded", event => {
     const topLevelItems = nav.querySelectorAll( nav.tagName + " > ul > li" );
 
     mobileToggle.addEventListener( 'click', toggleMobileNav );
+    if ( aMobileToggle === null ) aMobileToggle = mobileToggle;
 
-    topLevelItems.forEach( ( item ) => {
-      const hasSubNav = item.lastElementChild.tagName === 'UL';
-      if ( hasSubNav ) {
-        subNavs.push( item ); // remember
-        console.debug( "parent node found" );
+    topLevelItems.forEach( item => {
+      item.addEventListener( 'keydown', keyDownTopNav );
+
+      if ( hasSubNav( item ) ) {
+        subNavs.push( item ); // remember the subnavs for closeAllSubNavs()
         item.addEventListener( 'click', toggleSubNav );
       }
     } );
@@ -111,4 +182,5 @@ document.addEventListener( "DOMContentLoaded", event => {
     closeAllSubNavs();
     closeAllMobileNavs();
   }, false );
+
 } ); // on DOMContentLoaded
