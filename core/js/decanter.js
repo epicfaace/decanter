@@ -17,37 +17,44 @@ document.addEventListener( "DOMContentLoaded", event => {
 
   const hasSubNav = elem => ( elem.tagName.toUpperCase() == 'LI' && elem.lastElementChild.tagName.toUpperCase() === 'UL' );
 
+  const getNextLevelItems = elem => elem.querySelectorAll( elem.tagName + " > ul > li" );
+
   const getNav = elem => {
     console.debug( 'getNav: elem: ', elem );
     do {
       elem = elem.parentElement;
-      console.debug( 'getNav: elem: ', elem );
+      // console.debug( 'getNav: elem: ', elem );
     } while ( elem && !elem.classList.contains( navClass ) );
-    return elem;
+    return elem || false;
   };
 
   const getSubNav = elem => {
     console.debug( 'getSubNav: elem: ', elem );
     do {
       elem = elem.parentElement;
-      console.debug( 'getSubNav: elem: ', elem );
+      // console.debug( 'getSubNav: elem: ', elem );
     } while ( elem && !hasSubNav( elem ) );
-    return elem;
+    return elem || false;
   };
 
-  const openSubNav = ( trigger, level = 'lv1' ) => {
+  const openSubNav = ( trigger, level = 'lv1' ) => { //// TODO: remove level when scss no longer refers to it
     closeAllSubNavs();
-    trigger.classList.add( 'su-main-nav__item-' + level + '--expanded' );
-    setAriaExpanded( trigger, 'true' );
 
-    // set focus on the first link in the newly opened subnav
-    let firstLink = trigger.querySelector( 'ul > li' ).firstElementChild; // no idea why 'ul > li > a' doesn't work???
-    firstLink.focus();
+    if ( trigger ) {
+      trigger.classList.add( 'su-main-nav__item-' + level + '--expanded' );
+      setAriaExpanded( trigger, 'true' );
+
+      // set focus on the first link in the newly opened subnav
+      let firstLink = trigger.querySelector( 'ul > li' ).firstElementChild; // no idea why 'ul > li > a' doesn't work???
+      firstLink.focus();
+    }
   };
 
   const closeSubNav = ( trigger, level = 'lv1' ) => {
-    trigger.classList.remove( 'su-main-nav__item-' + level + '--expanded' );
-    setAriaExpanded( trigger, 'false' );
+    if ( trigger ) {
+      trigger.classList.remove( 'su-main-nav__item-' + level + '--expanded' );
+      setAriaExpanded( trigger, 'false' );
+    }
   };
 
   // click handler for subnav triggers
@@ -70,16 +77,22 @@ document.addEventListener( "DOMContentLoaded", event => {
   const openMobileNav = ( nav, toggle ) => {
     closeAllMobileNavs();
 
-    toggle.innerHTML = 'Close';
-    setAriaExpanded( nav, 'true' );
-    setAriaExpanded( toggle, 'true' );
-    nav.querySelector( 'li > a' ).focus(); // Focus on the first top level link
+    if ( nav ) {
+      toggle = toggle || nav.querySelector( nav.tagName + ' > button' );
+      toggle.innerHTML = 'Close';
+      setAriaExpanded( nav, 'true' );
+      setAriaExpanded( toggle, 'true' );
+      nav.querySelector( 'li > a' ).focus(); // Focus on the first top level link
+    }
   };
 
   const closeMobileNav = ( nav, toggle ) => {
-    toggle.innerHTML = 'Menu';
-    setAriaExpanded( nav, 'false' );
-    setAriaExpanded( toggle, 'false' );
+    if ( nav ) {
+      toggle = toggle || nav.querySelector( nav.tagName + ' > button' );
+      toggle.innerHTML = 'Menu';
+      setAriaExpanded( nav, 'false' );
+      setAriaExpanded( toggle, 'false' );
+    }
   };
 
   // click handler for hamburger icon (mobile menu toggle)
@@ -125,20 +138,32 @@ document.addEventListener( "DOMContentLoaded", event => {
 
     const target = event.target || event.srcElement; // the element that had focus when the key was pressed (presumably an <a> element)
     const theKey = event.key || event.keyCode;
-    console.debug( 'You pressed the ', theKey, ' key on target ', target );
     const theNav = getNav( target );
-    console.debug( 'theNav: ', theNav );
     const theSubNav = getSubNav( target );
+    const topLevelItems = getNextLevelItems( theNav );
+    const firstLink = topLevelItems[0].querySelector( 'a' );
+    const lastLink = topLevelItems[ topLevelItems.length - 1 ].querySelector( 'a' );
+    const desktop = showingDesktopNav();
+
+    console.debug( 'You pressed the ', theKey, ' key on target ', target );
+    console.debug( 'theNav: '   , theNav    );
     console.debug( 'theSubNav: ', theSubNav );
-    const firstLink = theNav.querySelector( 'ul > li > a' );
-    const lastLink = theNav.querySelector( 'ul > li:last-child > a' );
+    console.debug( 'firstLink: ', firstLink );
+    console.debug( 'firstLink: ', firstLink );
+    console.debug( 'lastLink: ' , lastLink  );
 
 
-    if ( isHome( theKey ) ) {
+    if ( isEsc( theKey ) ) {
+      if ( desktop ) closeAllSubNavs();
+      else closeAllMobileNavs();
+    }
+    else if ( isHome( theKey ) ) {
       firstLink.focus(); // Focus on the first top level menu link when HOME button is pressed
-    } else if ( isEnd( theKey ) ) {
+    }
+    else if ( isEnd( theKey ) ) {
       lastLink.focus(); // Focus on the last top level menu link when END button is pressed
-    } else if ( ( isSpace( theKey ) || isEnter( theKey ) ) && theSubNav ) {
+    }
+    else if ( ( isSpace( theKey ) || isEnter( theKey ) ) && theSubNav ) {
       event.preventDefault();
       openSubNav( theSubNav );
     }
@@ -163,7 +188,7 @@ document.addEventListener( "DOMContentLoaded", event => {
   // process each nav element
   navs.forEach( ( nav, index ) => {
     const mobileToggle = nav.querySelector( nav.tagName + " > button" );
-    const topLevelItems = nav.querySelectorAll( nav.tagName + " > ul > li" );
+    const topLevelItems = getNextLevelItems( nav );
 
     mobileToggle.addEventListener( 'click', toggleMobileNav );
     if ( aMobileToggle === null ) aMobileToggle = mobileToggle;
