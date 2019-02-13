@@ -204,6 +204,7 @@ document.addEventListener( "DOMContentLoaded", event => {
     getTopLevelNav() {
       let nav = this;
       while ( nav.elem instanceof NavItem ) {
+        // this is a subNav, so get the parent's nav
         nav = nav.elem.nav;
       }
       // for ( let nav = this; nav.elem instanceof NavItem; nav = nav.elem.nav );
@@ -303,38 +304,17 @@ document.addEventListener( "DOMContentLoaded", event => {
       }
     }
 
-    onClick( event ) {
-      console.debug( 'Nav:onclick event: ', event );
-      const target = event.target || event.srcElement; // the element that was clicked
-      console.debug( 'You clicked on ', target );
-
-      switch ( target.tagName.toUpperCase() ) {
-        case 'BUTTON':
-          console.debug( 'You clicked on a BUTTON.' );
-          if ( target == this.toggle ) {
-            console.debug( 'You clicked on the mobile toggle.' );
-            event.preventDefault();
-            event.stopPropagation();
-            if ( this.isExpanded() ) {
-              this.closeMobileNav();
-            }
-            else {
-              this.openMobileNav();
-            }
-          }
-          break;
-        case 'A':
-          this.items.forEach( item => {
-            if ( target == item.link && item.isSubNavTrigger() ) {
-              console.debug( 'You clicked on a subnav trigger.' );
-            }
-            else {
-              console.debug( 'You clicked on some other A element.' );
-            }
-          } );
-          break;
-        default:
-          console.debug( 'You clicked on an unhandled element: ', target.tagName.toUpperCase() );
+    // onClick handler only called for mobile toggle
+    onClick( event, target ) {
+      if ( target == this.toggle ) {
+        event.preventDefault();
+        event.stopPropagation();
+        if ( this.isExpanded() ) {
+          this.closeMobileNav();
+        }
+        else {
+          this.openMobileNav();
+        }
       }
     }
 
