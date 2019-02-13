@@ -1,5 +1,5 @@
 {
-  "modifier_class": "su-main-nav--mobile-search",
+  "modifier_class": "",
   "button_modifier_class": "",
   "toggle_text": "Menu",
   "lv1": [
@@ -51,5 +51,13 @@
       "href": "https://stackoverflow.com/",
       "text": "Help"
     }
-  ]
+  ],
+  "mobile_search": {
+    "action": "https://www.stanford.edu/search",
+    "method": "get",
+    "search_label": "Search Stanford sites",
+    "placeholder": "Search Stanford sites",
+    "search_input_name": "search-field",
+    "search_icon_src": "/img/icon-search.svg"
+  }
 }

@@ -23,6 +23,19 @@
     </li>
   {% endfor %}
   </ul>
+  {% if "su-main-nav--mobile-search" in modifier_class %}
+    {# no blessed idea why {% include ... with mobile_search %} doesn't work, but it doesn't :( #}
+    {% include "@decanter/components/site-search/site-search.twig" with
+      {
+        "action": mobile_search.action,
+        "method": mobile_search.method,
+        "search_label": mobile_search.search_label,
+        "placeholder": mobile_search.placeholder,
+        "search_input_name": mobile_search.search_input_name,
+        "search_icon_src": mobile_search.search_icon_src
+      }
+    %}
+  {% endif %}
 {% endif %}
 </nav>
 {% endif %}

@@ -373,9 +373,12 @@ document.addEventListener( "DOMContentLoaded", event => {
   } ); // navs.forEach
 
   // clicking anywhere outside a nav closes all navs
-  document.addEventListener('click', ( event ) => {
-    closeAllSubNavs();
-    closeAllMobileNavs();
+  document.addEventListener('click', event => {
+    const target = event.target || event.srcElement; // the element that was clicked
+    if ( !target.matches( '.' + navClass + ' ' + target.tagName ) ) { // if target is not under a main nav
+      closeAllSubNavs();
+      closeAllMobileNavs();
+    }
   }, false );
 
 } ); // on DOMContentLoaded
