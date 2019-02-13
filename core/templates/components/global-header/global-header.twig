@@ -1,0 +1,28 @@
+<section {{- attributes }} class="global-header">
+  {% include "@decanter/components/brand-bar/brand-bar.twig" %}
+
+  <div>
+
+      {% include "@decanter/components/lockup/lockup.twig" with
+        {
+          "link": "https://decanter.stanford.edu",
+          "line1": "SWS & UComm",
+          "line2": "Decanter",
+          "line5": "School of Humanities & Sciences",
+          "line1_modifier_class": "su-lockup__sitename-line1--small",
+          "line5_modifier_class": "su-lockup__sitename-line5--uppercase"
+        }
+      -%}
+
+    {% include "@decanter/components/site-search/site-search.twig" with
+      {
+        "action": "https://www.stanford.edu/search",
+        "method": "get",
+        "search_label": "Search this site",
+        "placeholder": "Search this site",
+        "search_input_name": "search-field",
+        "search_icon_src": "../../../img/icon-search.svg"
+      }
+    -%}
+  </div>
+</section>

@@ -1,0 +1,42 @@
+@charset "UTF-8";
+
+//
+// Global Header
+//
+// A Stanford branded global header that contains the following components: brand bar, logo lockup, site search and main navigation.
+//
+// Markup: ../../templates/components/global-header/global-header.twig
+//
+// Style guide: Components.Global Header
+//
+
+.global-header {
+  > div {
+    @include centered-column;
+    @include flex-container;
+  }
+
+  .su-brand-bar {
+    @include modular-spacing(2, 'margin-bottom');
+  }
+
+  .su-lockup {
+    //@include flex-column($columns: 9);
+
+    @include grid-media-only('lg') {
+      //@include flex-column($columns: 8);
+    }
+  }
+
+  .su-site-search {
+    @include flex-column($columns: 3);
+
+    @include grid-media-only('lg') {
+      @include flex-column($columns: 4);
+    }
+
+    @include grid-media-max('md') {
+      display: none;
+    }
+  }
+}
