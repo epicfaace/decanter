@@ -56,11 +56,11 @@ document.addEventListener( "DOMContentLoaded", event => {
     }
 
     isFirstItem() {
-      return this.nav.items.indexOf( this ) == 0;
+      return this.nav.items.indexOf( this ) === 0;
     }
 
     isLastItem() {
-      return this.nav.items.indexOf( this ) == this.nav.items.length - 1;
+      return this.nav.items.indexOf( this ) === this.nav.items.length - 1;
     }
 
     openSubNav() {
@@ -254,7 +254,7 @@ document.addEventListener( "DOMContentLoaded", event => {
           this.lastLink().focus();
           break;
         case 'next':
-          if ( currentIndex == lastIndex ) {
+          if ( currentIndex === lastIndex ) {
             this.firstLink().focus();
           }
           else {
@@ -262,7 +262,7 @@ document.addEventListener( "DOMContentLoaded", event => {
           }
           break;
         case 'prev':
-          if ( currentIndex == 0 ) {
+          if ( currentIndex === 0 ) {
             this.lastLink().focus();
           }
           else {
