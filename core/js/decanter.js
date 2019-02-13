@@ -130,7 +130,7 @@ document.addEventListener( "DOMContentLoaded", event => {
       else if ( isUpArrow( theKey ) ) {
         if ( this.nav.desktopNav() ) {
           if ( this.isSubNavItem() ) {
-            this.closeSubNav( true );
+            this.closeSubNav( true ); // close the subnav and put the focus on the trigger
           }
         }
         else {
@@ -142,8 +142,8 @@ document.addEventListener( "DOMContentLoaded", event => {
           this.nav.focusOn( 'prev', this );
         }
         else {
-          if ( this.isSubNavTrigger() ) {
-            this.closeSubNav();
+          if ( this.isSubNavItem() ) {
+            this.closeSubNav( true ); // close the subnav and put the focus on the trigger
           }
         }
       }
