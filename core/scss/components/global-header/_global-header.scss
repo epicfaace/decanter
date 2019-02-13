@@ -3,7 +3,7 @@
 //
 // Global Header
 //
-// A Stanford branded global header that contains the following components: brand bar, logo lockup, site search and main navigation.
+// A Stanford branded global header that contains the following components: brand bar, logo lockup, site search, main navigation and a skip link for keyboard users.
 //
 // Markup: ../../templates/components/global-header/global-header.twig
 //
@@ -11,9 +11,12 @@
 //
 
 .global-header {
+  @include box-shadow($depth: 'shallow', $stroke: 0);
+
   > div {
     @include centered-column;
     @include flex-container;
+    @include modular-spacing(1, 'padding-bottom');
   }
 
   .su-brand-bar {
@@ -21,11 +24,6 @@
   }
 
   .su-lockup {
-    //@include flex-column($columns: 9);
-
-    @include grid-media-only('lg') {
-      //@include flex-column($columns: 8);
-    }
   }
 
   .su-site-search {
