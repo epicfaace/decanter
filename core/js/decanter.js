@@ -23,10 +23,16 @@ document.addEventListener( "DOMContentLoaded", event => {
   //////
   // Helper classes
 
+  /** Represent an item in a navigation menu */
   class NavItem {
+    /**
+     * Create a NavItem
+     * @param {HTMLLIElement} item - the <li> that is the NavItem in the DOM
+     * @param {HTMLElement|Nav} nav - the Nav that contains the element. May be a main nav (<nav>) or a subnav (Nav)
+     */
     constructor( item, nav ) {
       this.item = item;
-      this.nav = nav; // parent elem that contains this item
+      this.nav = nav;
       this.link = this.item.querySelector( 'a' );
       this.subNav = null;
 
@@ -39,29 +45,17 @@ document.addEventListener( "DOMContentLoaded", event => {
       }
     }
 
-    isSubNavTrigger() {
-      return this.item.lastElementChild.tagName.toUpperCase() === 'UL';
-    };
+    isSubNavTrigger() { return this.item.lastElementChild.tagName.toUpperCase() === 'UL'; };
 
-    isSubNavItem() {
-      return this.isSubNavTrigger() || ( this.nav.depth > 0 );
-    }
+    isSubNavItem() { return this.isSubNavTrigger() || ( this.nav.depth > 0 ); }
 
-    isExpanded() {
-      return this.item.getAttribute('aria-expanded') === 'true';
-    }
+    isExpanded() { return this.item.getAttribute('aria-expanded') === 'true'; }
 
-    setExpanded( value ) {
-      this.item.setAttribute( 'aria-expanded', value );
-    }
+    setExpanded( value ) { this.item.setAttribute( 'aria-expanded', value ); }
 
-    isFirstItem() {
-      return this.nav.items.indexOf( this ) === 0;
-    }
+    isFirstItem() { return this.nav.items.indexOf( this ) === 0; }
 
-    isLastItem() {
-      return this.nav.items.indexOf( this ) === this.nav.items.length - 1;
-    }
+    isLastItem() { return this.nav.items.indexOf( this ) === this.nav.items.length - 1; }
 
     openSubNav() {
       closeAllSubNavs();
@@ -87,18 +81,30 @@ document.addEventListener( "DOMContentLoaded", event => {
     //////
     // Event handlers
 
-    // handler for all events attached to an instance of this class
-    // this method must exist when events are bound to an instance of a class (vs a function)
+    /**
+     * Handler for all events attached to an instance of this class. This method must exist when events are bound
+     * to an instance of a class (vs a function or method). This method is called for all events bound to an instance.
+     * It inspects the instance (this) for an appropriate handler based on the event type. If found, it dispatches
+     * the event to the appropriate handler.
+     *
+     * @param {KeyboardEvent} event
+     * @returns {*}
+     */
     handleEvent( event ) {
       event = event || window.event;
-      // if this class has an onevent method, e.g. onClick, onKeydown, invoke it
+      // if this class has an onEvent method, e.g. onClick, onKeydown, invoke it
       const handler = 'on' + event.type.charAt(0).toUpperCase() + event.type.slice(1);
       if ( typeof  this[ handler ] === 'function' ) {
         return this[ handler ]( event );
       }
     }
 
-    // keydown handler
+    /**
+     * Handler for keydown events. keydown is bound to all NavItem's.
+     * Dispatched from this.handleEvent().
+     *
+     * @param {KeyboardEvent} event
+     */
     onKeydown( event ) {
       const theKey  = event.key || event.keyCode;
       const shifted = event.shiftKey;
@@ -175,7 +181,12 @@ document.addEventListener( "DOMContentLoaded", event => {
       }
     }
 
-    // click handler - only bound to subnav triggers
+    /**
+     * Handler for click events. click is only bound to subnav triggers.
+     * Dispatched from this.handleEvent().
+     *
+     * @param {KeyboardEvent} event
+     */
     onClick( event ) {
       event.preventDefault();
       event.stopPropagation();
@@ -190,11 +201,18 @@ document.addEventListener( "DOMContentLoaded", event => {
 
   }
 
+  /** Represent a navigation menu, either top level or nested. */
   class Nav {
+    /**
+     * Create a Nav
+     *
+     * @param {HTMLElement|NavItem} elem - the element that is the nav menu. May be a main nav (<nav>) or a subnav (NavItem).
+     * @param {number} depth - nesting level of the nav. 0 is main nav.
+     */
     constructor( elem, depth ) {
       this.elem = elem;
       this.depth = depth;
-      if ( elem instanceof NavItem ) elem = elem.item;
+      if ( elem instanceof NavItem ) elem = elem.item; // if this is a subnav, we need the correpsonding HTMLElement for .querySelector()
       this.toggle = elem.querySelector( elem.tagName + " > button" );
       this.toggleText = this.toggle ? this.toggle.innerText : '';
       this.items = [];
@@ -212,38 +230,25 @@ document.addEventListener( "DOMContentLoaded", event => {
         // this is a subNav, so get the parent's nav
         nav = nav.elem.nav;
       }
-      // for ( let nav = this; nav.elem instanceof NavItem; nav = nav.elem.nav );
       return nav;
     }
 
-    desktopNav() {
-      return getComputedStyle( this.getTopLevelNav().toggle ).display === 'none';
-    }
+    desktopNav() { return getComputedStyle( this.getTopLevelNav().toggle ).display === 'none'; }
 
-    isExpanded() {
-      return this.elem instanceof NavItem ? this.elem.isExpanded() : this.elem.getAttribute('aria-expanded') === 'true';
-    }
+    isExpanded() { return this.elem instanceof NavItem ? this.elem.isExpanded() : this.elem.getAttribute('aria-expanded') === 'true'; }
 
     setExpanded( value ) {
       this.elem instanceof NavItem ? this.elem.setExpanded( value ) : this.elem.setAttribute( 'aria-expanded', value );
       if ( this.toggle ) this.toggle.setAttribute( 'aria-expanded', value );
     }
 
-    firstItem() {
-      return this.items.length ? this.items[ 0 ] : null;
-    }
+    firstItem() { return this.items.length ? this.items[ 0 ] : null; }
 
-    lastItem() {
-      return this.items.length ? this.items[ this.items.length - 1 ] : null;
-    }
+    lastItem() { return this.items.length ? this.items[ this.items.length - 1 ] : null; }
 
-    firstLink() {
-      return this.items.length ? this.firstItem().link : null;
-    }
+    firstLink() { return this.items.length ? this.firstItem().link : null; }
 
-    lastLink() {
-      return this.items.length ? this.lastItem().link : null;
-    }
+    lastLink() { return this.items.length ? this.lastItem().link : null; }
 
     focusOn( link, currentItem = null ) {
       var currentIndex, lastIndex = null;
@@ -297,8 +302,16 @@ document.addEventListener( "DOMContentLoaded", event => {
 
     // Event handlers
 
-    // handler for all events attached to an instance of this class
-    // this method must exist when events are bound to an instance of a class (vs a function)
+
+    /**
+     * Handler for all events attached to an instance of this class. This method must exist when events are bound
+     * to an instance of a class (vs a function or method). This method is called for all events bound to an instance.
+     * It inspects the instance (this) for an appropriate handler based on the event type. If found, it dispatches
+     * the event to the appropriate handler.
+     *
+     * @param {KeyboardEvent} event
+     * @returns {*}
+     */
     handleEvent( event ) {
       event = event || window.event;
       // if this class has an onEvent method, e.g. onClick, onKeydown, invoke it
@@ -309,7 +322,12 @@ document.addEventListener( "DOMContentLoaded", event => {
       }
     }
 
-    // onClick handler only called for mobile toggle
+    /**
+     * Handler for click events. click is only bound to the mobile toggle.
+     * Dispatched from this.handleEvent().
+     *
+     * @param {KeyboardEvent} event
+     */
     onClick( event, target ) {
       if ( target == this.toggle ) {
         event.preventDefault();
@@ -336,12 +354,11 @@ document.addEventListener( "DOMContentLoaded", event => {
   // Code
 
   // globals
+  const navs = document.querySelectorAll( '.' + navClass ); // all main navs
   let theNavs = []; // global record of all main navs - used by closeAllMobileNavs
   let theSubNavs = []; // global record of all sub navs - used by closeAllSubNavs
 
-  const navs = document.querySelectorAll( '.' + navClass ); // all main elem's
-  // process each elem element
-
+  // process each nav
   var firstZindex;
   navs.forEach( ( nav, index ) => {
     const theNav = new Nav( nav, 0 );
@@ -355,7 +372,7 @@ document.addEventListener( "DOMContentLoaded", event => {
     }
   } ); // navs.forEach
 
-  // clicking anywhere outside a elem closes all navs
+  // clicking anywhere outside a nav closes all navs
   document.addEventListener('click', ( event ) => {
     closeAllSubNavs();
     closeAllMobileNavs();
