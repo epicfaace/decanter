@@ -103,21 +103,20 @@ document.addEventListener( "DOMContentLoaded", event => {
       const theKey  = event.key || event.keyCode;
       const shifted = event.shiftKey;
 
-      if ( !isTab( theKey ) ) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-
       if ( isEsc( theKey ) ) {
         closeAllSubNavs();
         if ( !this.nav.desktopNav() ) closeAllMobileNavs();
       }
       else if ( isSpace( theKey ) ) {
+        event.preventDefault();
+        event.stopPropagation();
         if ( this.isSubNavTrigger() ) {
           this.openSubNav();
         }
       }
       else if ( isDownArrow( theKey ) ) {
+        event.preventDefault();
+        event.stopPropagation();
         if ( this.nav.desktopNav() ) {
           if ( this.isSubNavTrigger() ) {
             this.openSubNav();
@@ -128,6 +127,8 @@ document.addEventListener( "DOMContentLoaded", event => {
         }
       }
       else if ( isUpArrow( theKey ) ) {
+        event.preventDefault();
+        event.stopPropagation();
         if ( this.nav.desktopNav() ) {
           if ( this.isSubNavItem() ) {
             this.closeSubNav( true ); // close the subnav and put the focus on the trigger
@@ -138,6 +139,8 @@ document.addEventListener( "DOMContentLoaded", event => {
         }
       }
       else if ( isLeftArrow( theKey ) ) {
+        event.preventDefault();
+        event.stopPropagation();
         if ( this.nav.desktopNav() ) {
           this.nav.focusOn( 'prev', this );
         }
@@ -148,6 +151,8 @@ document.addEventListener( "DOMContentLoaded", event => {
         }
       }
       else if ( isRightArrow( theKey ) ) {
+        event.preventDefault();
+        event.stopPropagation();
         if ( this.nav.desktopNav() ) {
           this.nav.focusOn( 'next', this );
         }
